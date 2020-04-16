@@ -1,0 +1,23 @@
+{
+  "name": "pakete",
+  "version": "1.0.0",
+  "description": "A simple package directory application",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vnnycnza/pakete.git"
+  },
+  "author": "@vnnycnza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vnnycnza/pakete/issues"
+  },
+  "homepage": "https://github.com/vnnycnza/pakete#readme",
+  "engines": {
+    "node": "12.15.0",
+    "npm": "6.13.4"
+  }
+}
