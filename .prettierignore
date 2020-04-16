@@ -1,0 +1,6 @@
+.gitignore
+.prettierignore
+.DS_Store
+.tmp
+db/doc
+README.md
