@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1587083376432" clover="3.2.0">
+  <project timestamp="1587083376432" name="All files">
+    <metrics statements="59" coveredstatements="59" conditionals="0" coveredconditionals="0" methods="16" coveredmethods="16" elements="75" coveredelements="75" complexity="0" loc="59" ncloc="59" packages="1" files="4" classes="4"/>
+    <file name="Author.js" path="/Users/vanessaconoza/prsnl/2020/pakete/models/Author.js">
+      <metrics statements="18" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+      <line num="15" count="12" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="26" count="5" type="stmt"/>
+      <line num="27" count="4" type="stmt"/>
+      <line num="28" count="3" type="stmt"/>
+      <line num="30" count="2" type="stmt"/>
+      <line num="31" count="2" type="stmt"/>
+      <line num="41" count="3" type="stmt"/>
+      <line num="42" count="3" type="stmt"/>
+      <line num="43" count="2" type="stmt"/>
+      <line num="45" count="1" type="stmt"/>
+      <line num="46" count="1" type="stmt"/>
+      <line num="55" count="3" type="stmt"/>
+      <line num="56" count="3" type="stmt"/>
+      <line num="57" count="4" type="stmt"/>
+      <line num="59" count="1" type="stmt"/>
+      <line num="60" count="1" type="stmt"/>
+      <line num="65" count="1" type="stmt"/>
+    </file>
+    <file name="Package.js" path="/Users/vanessaconoza/prsnl/2020/pakete/models/Package.js">
+      <metrics statements="13" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+      <line num="15" count="9" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="26" count="5" type="stmt"/>
+      <line num="30" count="4" type="stmt"/>
+      <line num="31" count="3" type="stmt"/>
+      <line num="33" count="2" type="stmt"/>
+      <line num="34" count="2" type="stmt"/>
+      <line num="43" count="3" type="stmt"/>
+      <line num="44" count="3" type="stmt"/>
+      <line num="45" count="4" type="stmt"/>
+      <line num="47" count="1" type="stmt"/>
+      <line num="48" count="1" type="stmt"/>
+      <line num="53" count="1" type="stmt"/>
+    </file>
+    <file name="PackageAuthor.js" path="/Users/vanessaconoza/prsnl/2020/pakete/models/PackageAuthor.js">
+      <metrics statements="19" coveredstatements="19" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+      <line num="15" count="17" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="26" count="5" type="stmt"/>
+      <line num="31" count="4" type="stmt"/>
+      <line num="35" count="3" type="stmt"/>
+      <line num="37" count="2" type="stmt"/>
+      <line num="38" count="2" type="stmt"/>
+      <line num="49" count="4" type="stmt"/>
+      <line num="50" count="4" type="stmt"/>
+      <line num="55" count="3" type="stmt"/>
+      <line num="59" count="2" type="stmt"/>
+      <line num="61" count="2" type="stmt"/>
+      <line num="62" count="2" type="stmt"/>
+      <line num="74" count="7" type="stmt"/>
+      <line num="75" count="7" type="stmt"/>
+      <line num="81" count="10" type="stmt"/>
+      <line num="83" count="1" type="stmt"/>
+      <line num="84" count="1" type="stmt"/>
+      <line num="89" count="1" type="stmt"/>
+    </file>
+    <file name="PackageInfo.js" path="/Users/vanessaconoza/prsnl/2020/pakete/models/PackageInfo.js">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <line num="15" count="8" type="stmt"/>
+      <line num="29" count="7" type="stmt"/>
+      <line num="30" count="7" type="stmt"/>
+      <line num="36" count="6" type="stmt"/>
+      <line num="41" count="6" type="stmt"/>
+      <line num="45" count="5" type="stmt"/>
+      <line num="47" count="2" type="stmt"/>
+      <line num="48" count="2" type="stmt"/>
+      <line num="53" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>

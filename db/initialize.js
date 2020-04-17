@@ -1,5 +1,3 @@
-/* eslint-disable global-require */
-
 'use strict';
 
 const dbConfig = require('../knexfile');

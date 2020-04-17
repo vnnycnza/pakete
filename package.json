@@ -4,7 +4,8 @@
   "description": "A simple package directory application",
   "main": "index.js",
   "scripts": {
-    "test": "npm run prettier && npm run lint",
+    "test:unit": "TZ=UTC APP_ENV=\"test\" node_modules/.bin/jest tests/unit/.*.test.js --c unit.config.js --detectOpenHandles",
+    "test": "npm run prettier && npm run lint && npm run test:unit",
     "prettier-fix": "./node_modules/.bin/prettier --write \"./**/*\"",
     "prettier": "./node_modules/.bin/prettier --check \"./**/*\"",
     "lint-fix": "./node_modules/.bin/eslint --fix \"./**/*.js\"",
@@ -32,6 +33,7 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-import": "^2.20.2",
+    "jest": "^25.3.0",
     "knex": "^0.20.15",
     "prettier": "^2.0.2"
   },

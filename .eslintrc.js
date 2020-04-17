@@ -7,7 +7,13 @@ module.exports = {
     es6: true,
   },
   extends: ['eslint:recommended', 'airbnb-base/legacy', 'prettier'],
-  globals: {},
+  globals: {
+    jest: 'readonly',
+    describe: 'readonly',
+    beforeEach: 'readonly',
+    expect: 'readonly',
+    test: 'readonly',
+  },
   parserOptions: {
     ecmaVersion: 2018,
     ecmaFeatures: {
@@ -19,7 +25,9 @@ module.exports = {
   },
   rules: {
     'no-console': 0,
+    'no-underscore-dangle': 0,
     'require-jsdoc': 'error',
+    'global-require': 0,
     'valid-jsdoc': [
       2,
       {
