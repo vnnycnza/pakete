@@ -28,6 +28,10 @@ module.exports = {
     'no-underscore-dangle': 0,
     'require-jsdoc': 'error',
     'global-require': 0,
+    'no-restricted-syntax': 0,
+    'no-await-in-loop': 0,
+    'no-param-reassign': 0,
+    camelcase: 0,
     'valid-jsdoc': [
       2,
       {

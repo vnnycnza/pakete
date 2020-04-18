@@ -7,4 +7,7 @@ beforeEach(() => {
   global.consoleLogSpy = jest
     .spyOn(console, 'log')
     .mockImplementation(() => null);
+  global.consoleLogSpy = jest
+    .spyOn(console, 'info')
+    .mockImplementation(() => null);
 });

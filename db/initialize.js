@@ -22,7 +22,7 @@ async function main() {
     knex.destroy();
     process.exit(0);
   } catch (e) {
-    console.log('Error creating database', e);
+    console.info('Error creating database', e);
     process.exit(1);
   }
 }

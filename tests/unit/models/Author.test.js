@@ -15,86 +15,33 @@ describe('[ Models - Author ]', () => {
     });
   });
 
-  describe('{ createAuthor }', () => {
+  describe('{ createAuthors }', () => {
+    let sample;
+
     beforeEach(() => {
+      sample = [{ name: 'Foo' }, { name: 'Bar' }];
       dbMock = {
-        insert: jest.fn().mockReturnValue([1]),
-        where: jest
-          .fn()
-          .mockReturnValue([{ id: 1, name: 'Foo', email: 'foo@bar.com' }]),
+        batchInsert: jest.fn().mockReturnValue([1]),
       };
-      mockKnex = jest.fn().mockImplementation(() => dbMock);
+      mockKnex = dbMock;
       model = new Author(mockKnex);
     });
 
-    test('{ should have inserted values to authors table }', async () => {
-      await model.createAuthor('Foo', 'foo@bar.com');
-      expect(mockKnex).toHaveBeenCalledWith('authors');
-      expect(dbMock.insert).toHaveBeenCalledWith({
-        email: 'foo@bar.com',
-        name: 'Foo',
-      });
+    test('{ should have called batch insert to authors table }', async () => {
+      await model.createAuthors(sample);
+      expect(dbMock.batchInsert).toHaveBeenCalledTimes(1);
+      expect(dbMock.batchInsert).toHaveBeenCalledWith('authors', sample, 1000);
     });
 
-    test('{ should have retrieved inserted row by returned id }', async () => {
-      await model.createAuthor('Foo', 'foo@bar.com');
-      expect(mockKnex).toHaveBeenCalledWith('authors');
-      expect(dbMock.where).toHaveBeenCalledWith('id', 1);
+    test('{ should have returned null }', async () => {
+      const r = await model.createAuthors(sample);
+      expect(r).toBeNull();
     });
 
-    test('{ should have returned the inserted row }', async () => {
-      const r = await model.createAuthor('Foo', 'foo@bar.com');
-      expect(r).toEqual({ id: 1, name: 'Foo', email: 'foo@bar.com' });
-    });
-
-    test('{ should throw error if db insert encounters error }', async () => {
-      dbMock.insert.mockRejectedValue('e');
+    test('{ should throw error if db batchInsert encounters error }', async () => {
+      dbMock.batchInsert.mockRejectedValue('e');
       try {
-        await model.createAuthor('Foo', 'foo@bar.com');
-      } catch (e) {
-        expect(e).not.toBeNull();
-        expect(e.message).toEqual('DatabaseError');
-      }
-    });
-
-    test('{ should throw error if db retrieve encounters error }', async () => {
-      dbMock.where.mockRejectedValue('e');
-      try {
-        await model.createAuthor('Foo', 'foo@bar.com');
-      } catch (e) {
-        expect(e).not.toBeNull();
-        expect(e.message).toEqual('DatabaseError');
-      }
-    });
-  });
-
-  describe('{ getAuthorById }', () => {
-    beforeEach(() => {
-      dbMock = {
-        where: jest
-          .fn()
-          .mockReturnValue([{ id: 1, name: 'Foo', email: 'foo@bar.com' }]),
-      };
-      mockKnex = jest.fn().mockImplementation(() => dbMock);
-      model = new Author(mockKnex);
-    });
-
-    test('{ should have retrieved from authors table by id  }', async () => {
-      await model.getAuthorById(1);
-      expect(mockKnex).toHaveBeenCalledWith('authors');
-      expect(dbMock.where).toHaveBeenCalledWith('id', 1);
-    });
-
-    test('{ should have returned the retrieved row }', async () => {
-      const r = await model.getAuthorById(1);
-      expect(r).toEqual({ id: 1, name: 'Foo', email: 'foo@bar.com' });
-    });
-
-    test('{ should throw error if db retrieve encounters error }', async () => {
-      dbMock.where.mockRejectedValue('e');
-
-      try {
-        await model.getAuthorById(1);
+        await model.createAuthors(sample);
       } catch (e) {
         expect(e).not.toBeNull();
         expect(e.message).toEqual('DatabaseError');
@@ -117,7 +64,7 @@ describe('[ Models - Author ]', () => {
 
     test('{ should have called select from authors table }', async () => {
       await model.getAllAuthors();
-      expect(dbMock.select).toHaveBeenCalled();
+      expect(dbMock.select).toHaveBeenCalledTimes(1);
       expect(tableMock).toHaveBeenCalledWith('authors');
     });
 

@@ -5,6 +5,7 @@ exports.up = async knex => {
     table.increments('id').primary();
     table.string('name');
     table.string('email');
+    table.unique(['email']);
   });
 
   await knex.schema.createTable('package_info', table => {
@@ -12,13 +13,14 @@ exports.up = async knex => {
 
     table.string('title');
     table.text('description');
-    table.string('publication');
+    table.dateTime('publication');
   });
 
   await knex.schema.createTable('packages', table => {
     table.increments('id').primary();
     table.string('package');
     table.string('version');
+    table.string('search_name');
     table
       .integer('package_info_id')
       .unsigned()

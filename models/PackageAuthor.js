@@ -16,72 +16,57 @@ class PackageAuthor {
   }
 
   /**
-   * Add to `package_authors` table where `type = author`
-   * @param {Integer} authorId - Author ID
-   * @param {Integer} packageInfoId - PackageInfo ID
-   * @returns {Object} object containing `id`, `type`, `author_id`, `package_info_id`,
-   */
-  async createPackageAuthor(authorId, packageInfoId) {
-    try {
-      const pkgAuthorId = await this._db('package_authors').insert({
-        author_id: authorId,
-        package_info_id: packageInfoId,
-        type: 'author',
-      });
-      const pkgAuthor = await this._db('package_authors').where(
-        'id',
-        pkgAuthorId[0],
-      );
-      return { ...pkgAuthor.shift() };
-    } catch (e) {
-      console.log('[DatabaseError]', e);
-      throw new Error('DatabaseError', e);
-    }
-  }
-
-  /**
-   * Add to `package_authors` table where `type = maintainer`
-   * @param {Integer} authorId - Author ID
-   * @param {Integer} packageInfoId - PackageInfo ID
-   * @returns {Object} object containing `id`, `type`, `author_id`, `package_info_id`,
-   */
-  async createPackageMaintainer(authorId, packageInfoId) {
-    try {
-      const pkgAuthorId = await this._db('package_authors').insert({
-        author_id: authorId,
-        package_info_id: packageInfoId,
-        type: 'maintainer',
-      });
-      const pkgAuthor = await this._db('package_authors').where(
-        'id',
-        pkgAuthorId[0],
-      );
-      return { ...pkgAuthor.shift() };
-    } catch (e) {
-      console.log('[DatabaseError]', e);
-      throw new Error('DatabaseError', e);
-    }
-  }
-
-  /**
    * Retrieves entries from `package_authors` table for specific package
-   * Populated by `authors`
+   * `SELECT <...columns> FROM package_authors pa LEFT JOIN authors a `
+   * `ON (pa.author_id = a.id) WHERE pa.package_info_id IN (<packageInfoIds>)`
    *
-   * @param {Integer} packageInfoId Package Info ID
+   * @param {Array} packageInfoIds Package Info ID
    * @returns {Object[]} array of objects containing `name`, `email`
    */
-  async getAllPackageAuthorsById(packageInfoId) {
+  async getAllPackageAuthorsByIds(packageInfoIds) {
     try {
+      const columnsToSelect = [
+        'authors.name',
+        'authors.email',
+        'package_authors.type',
+        'package_authors.package_info_id',
+      ];
       const packages = await this._db
-        .select(['name', 'email', 'type'])
+        .select(columnsToSelect)
         .from('package_authors')
         .leftJoin('authors', 'package_authors.author_id', 'authors.id')
-        .where('package_info_id', packageInfoId);
+        .whereIn('package_authors.package_info_id', packageInfoIds);
 
-      return packages.map(pkg => ({ ...pkg }));
+      return packages.map(pkg => ({
+        ...pkg,
+        ...(pkg.email === null ? { email: '' } : { email: pkg.email }),
+      }));
     } catch (e) {
-      console.log('[DatabaseError]', e);
-      throw new Error('DatabaseError', e);
+      console.info('[DatabaseError.getAllPackageAuthorsByIds]', e);
+      let err = new Error('DatabaseError');
+      err.details = { errorType: e.name, errorMsg: e.message };
+
+      throw err;
+    }
+  }
+
+  /**
+   * Add to `package_authors` table
+   * `INSERT INTO package_authors () VALUES (....)`
+   *
+   * @param {Object[]} pkgAuthors - array of objs must contain `author_id` & `package_info_id` & `type`
+   * @returns {Promise}
+   */
+  async createPackageAuthors(pkgAuthors) {
+    try {
+      await this._db.batchInsert('package_authors', pkgAuthors, 1000);
+      return null;
+    } catch (e) {
+      console.info('[DatabaseError.createPackageAuthors]', e);
+      let err = new Error('DatabaseError');
+      err.details = { errorType: e.name, errorMsg: e.message };
+
+      throw err;
     }
   }
 }

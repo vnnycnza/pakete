@@ -21,10 +21,7 @@ describe('[ Models - PackageInfo ]', () => {
 
     beforeEach(() => {
       updateMock = jest.fn();
-      whereMock = jest
-        .fn()
-        .mockReturnValueOnce([{ id: 1, title: 'Foo' }])
-        .mockReturnValueOnce({ update: updateMock });
+      whereMock = jest.fn().mockReturnValue({ update: updateMock });
       dbMock = {
         insert: jest.fn().mockReturnValue([1]),
         where: whereMock,
@@ -43,12 +40,6 @@ describe('[ Models - PackageInfo ]', () => {
       });
     });
 
-    test('{ should have retrieved inserted row by returned id }', async () => {
-      await model.createPackageInfo(1, 'Foo', 'Bar', '2020-10-12');
-      expect(mockKnex).toHaveBeenCalledWith('packages');
-      expect(whereMock).toHaveBeenNthCalledWith(1, 'id', 1);
-    });
-
     test('{ should have updated packages.package_info_id to package_info.id }', async () => {
       await model.createPackageInfo(1, 'Foo', 'Bar', '2020-10-12');
       expect(mockKnex).toHaveBeenCalledWith('packages');
@@ -56,24 +47,13 @@ describe('[ Models - PackageInfo ]', () => {
       expect(updateMock).toHaveBeenCalledWith({ package_info_id: 1 });
     });
 
-    test('{ should have returned the inserted row }', async () => {
+    test('{ should have returned the inserted id }', async () => {
       const r = await model.createPackageInfo(1, 'Foo', 'Bar', '2020-10-12');
-      expect(r).toEqual({ id: 1, title: 'Foo' });
+      expect(r).toEqual(1);
     });
 
     test('{ should throw error if db insert encounters error }', async () => {
       dbMock.insert.mockRejectedValue('e');
-      try {
-        await model.createPackageInfo(1, 'Foo', 'Bar', '2020-10-12');
-      } catch (e) {
-        expect(e).not.toBeNull();
-        expect(e.message).toEqual('DatabaseError');
-      }
-    });
-
-    test('{ should throw error if db retrieve encounters error }', async () => {
-      dbMock.where.mockRejectedValue('e');
-
       try {
         await model.createPackageInfo(1, 'Foo', 'Bar', '2020-10-12');
       } catch (e) {

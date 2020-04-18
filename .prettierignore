@@ -2,5 +2,6 @@
 .prettierignore
 .DS_Store
 .tmp
+.env
 db/doc
 README.md
