@@ -35,12 +35,9 @@ async function main() {
     const PackageInfoModel = new PackageInfo(knex);
     const PackageAuthorModel = new PackageAuthor(knex);
 
-    let max = process.env.DOWNLOAD_SIZE;
-    max = !max || max > 100 ? 100 : max;
-
     // Query for package list from database
     console.info('[Parser] Retrieving packages list from database...');
-    const list = await PackageModel.getAllPackages(max);
+    const list = await PackageModel.getAllPackages();
 
     // Quick check if there are loaded packages already
     if (list.length === 0) {

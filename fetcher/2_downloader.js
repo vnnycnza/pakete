@@ -11,7 +11,6 @@ require('dotenv').config();
  * Queries database for the package list
  * Attempts to try and download packages
  * Number of pkgs to download based on env var
- * Max Limit is manually set to 100
  *
  * @returns {Promise}
  */
@@ -31,12 +30,9 @@ async function main() {
       pDir: pkgDir,
     });
 
-    let max = parseInt(process.env.DOWNLOAD_SIZE, 10);
-    max = !max || max > 100 ? 100 : max;
-
     // Query for package list from database
     console.info('[Downloader] Retrieving packages list from database..');
-    const list = await PackageModel.getAllPackages(max);
+    const list = await PackageModel.getAllPackages();
 
     // Just a check if there are loaded packages already
     if (list.length === 0) {
