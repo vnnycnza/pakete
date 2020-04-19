@@ -4,8 +4,6 @@ const _ = require('lodash');
 const Cran = require('../services/Cran');
 const Package = require('../models/Package');
 
-require('dotenv').config();
-
 /**
  * Gets package list from CRAN Server
  * Parse & get package name & version
@@ -21,12 +19,12 @@ async function main() {
     const hrstart = process.hrtime();
 
     // Setup db connection, models & services
-    const config = require('../knexfile');
-    knex = require('knex')(config.development);
+    const env = process.env.NODE_ENV || 'development';
+    const dbConfig = require('../knexfile');
+    knex = require('knex')(dbConfig[env]);
+
     const PackageModel = new Package(knex);
     const CranService = new Cran({
-      pUrl: process.env.CRAN_PACKAGE_LIST_URL,
-      dUrl: process.env.CRAN_PACKAGE_DOWNLOAD_URL,
       maxItems: process.env.CRAN_PACKAGE_LIST_MAX,
     });
 

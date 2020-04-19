@@ -48,39 +48,47 @@ npm run db:rollback
 ## Running the application
 
 ### Prerequisites
-- MySQL
-- Node.js
+- MySQL v5.7
+- Node.js v12.15
 
 ### Configuration
-Update `.env` file to overwrite defaults
+- See [.env](.env)
 
-| key                        | description                        | default                |
-| ---------------------------| -----------------------------------| -----------------------|
-| DB_HOST                    | Database Host                      | `localhost`            |
-| DB_USER                    | Database User                      | `root`                 |
-| DB_PW                      | Database Password                  | -                      |
-| DB_NAME                    | Database Name                      | `pakete`               |
-| CRAN_PACKAGE_DOWNLOAD_URL  | Cran Server url                    | `http://cran.....`     |
-| CRAN_PACKAGE_LIST_URL      | Cran Server download url           | `http://cran.....`     |
-| CRAN_PACKAGE_LIST_MAX      | Number of packages to retrieve     | 50                     |
-| NODE_ENV                   | Node Environment                   | `development`          |
-| URL                        | Server URL                         | `http://localhost:3001`|
-| PORT                       | Server Port                        | `3001`                 |
-
-### Commands
-1. Create database 
+### Running on your local
+- Ensure prerequisites are installed
+- Create database user
+```
+CREATE USER 'pakete'@'localhost' IDENTIFIED BY 'pakete';
+GRANT ALL PRIVILEGES ON pakete.* TO 'pakete'@'localhost';
+```
+- Run initializing db
 ```
 npm run db:init
 ```
-2. Create tables 
+- Run fetcher
 ```
-npm run db:migrate
+npm run fetch
 ```
-3. Run fetcher 
+- Run server
 ```
-npm run fetcher
+npm start
+``` 
+- Can also run tests
 ```
-4. Start server
+npm test
 ```
-npm run server
+
+### Running using Docker
+- Build and start service. This will start mysql & api server.
 ```
+docker-compose up --build -d
+```
+- Run fetcher
+```
+docker-compose run --rm app npm run fetch
+```
+- Can also run tests
+```
+docker-compose run --rm --no-deps app npm test
+```
+

@@ -17,10 +17,11 @@ const path = require('path');
  */
 class Cran {
   constructor(config) {
-    this._packagesUrl = config.pUrl;
-    this._descriptionUrl = config.dUrl;
+    this._packagesUrl = 'https://cran.r-project.org/src/contrib/PACKAGES';
+    this._descriptionUrl =
+      'https://cran.r-project.org/src/contrib/[PACKAGE_NAME]_[PACKAGE_VERSION].tar.gz';
     this._packageDir = config.pDir;
-    this._maxItems = parseInt(config.maxItems, 10);
+    this._maxItems = config.maxItems ? parseInt(config.maxItems, 10) : 10;
   }
 
   /**

@@ -12,8 +12,6 @@ const PackageInfo = require('../models/PackageInfo');
 const Cran = require('../services/Cran');
 const { getFileContentsFromTar } = require('../services/Utils');
 
-require('dotenv').config();
-
 /**
  * Queries database for the package list
  * Parses the packages for DESCRIPTION
@@ -29,9 +27,11 @@ async function main() {
     const hrstart = process.hrtime();
 
     // Setup package directory, db connection & models
-    const config = require('../knexfile');
-    knex = require('knex')(config.development);
+    const env = process.env.NODE_ENV || 'development';
+    const dbConfig = require('../knexfile');
+    knex = require('knex')(dbConfig[env]);
     const pkgDir = path.resolve(__dirname, '../.tmp/pkg');
+
     const AuthorModel = new Author(knex);
     const PackageModel = new Package(knex);
     const PackageInfoModel = new PackageInfo(knex);

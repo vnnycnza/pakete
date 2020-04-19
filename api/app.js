@@ -12,8 +12,6 @@ const PackageInfo = require('../models/PackageInfo');
 
 const Server = require('./Server');
 
-require('dotenv').config();
-
 /**
  * Main Function
  * @returns {undefined}
@@ -21,17 +19,18 @@ require('dotenv').config();
 async function main() {
   const config = {
     app: {
-      env: process.env.NODE_ENV,
-      port: process.env.PORT,
-      url: process.env.URL,
+      env: process.env.NODE_ENV || 'development',
+      port: process.env.PORT || 3001,
+      host: process.env.HOST || 'localhost',
     },
   };
 
   let knex;
   try {
-    // Setup db connection, models & services
+    // Setup db connection & models
     const dbConfig = require('../knexfile');
-    knex = require('knex')(dbConfig.development);
+    knex = require('knex')(dbConfig[config.app.env]);
+
     const AuthorModel = new Author(knex);
     const PackageModel = new Package(knex);
     const PackageInfoModel = new PackageInfo(knex);

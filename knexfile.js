@@ -1,16 +1,15 @@
 'use strict';
 
-require('dotenv').config();
 const path = require('path');
 
 module.exports = {
   development: {
     client: 'mysql',
     connection: {
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PW,
-      database: process.env.DB_NAME,
+      host: process.env.DB_HOST || 'localhost',
+      user: process.env.DB_USER || 'pakete',
+      password: process.env.DB_PW || 'pakete',
+      database: process.env.DB_NAME || 'pakete',
     },
     pool: {
       min: 2,

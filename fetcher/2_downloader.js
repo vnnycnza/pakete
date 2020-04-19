@@ -5,8 +5,6 @@ const path = require('path');
 const Cran = require('../services/Cran');
 const Package = require('../models/Package');
 
-require('dotenv').config();
-
 /**
  * Queries database for the package list
  * Attempts to try and download packages
@@ -22,15 +20,13 @@ async function main() {
     const hrstart = process.hrtime();
 
     // Setup db connection, models & services
-    const config = require('../knexfile');
-    knex = require('knex')(config.development);
+    const env = process.env.NODE_ENV || 'development';
+    const dbConfig = require('../knexfile');
+    knex = require('knex')(dbConfig[env]);
     const pkgDir = path.resolve(__dirname, '../.tmp/pkg');
+
     const PackageModel = new Package(knex);
-    const CranService = new Cran({
-      pUrl: process.env.CRAN_PACKAGE_LIST_URL,
-      dUrl: process.env.CRAN_PACKAGE_DOWNLOAD_URL,
-      pDir: pkgDir,
-    });
+    const CranService = new Cran({ pDir: pkgDir });
 
     // Query for package list from database
     console.info('[Downloader] Retrieving packages list from database..');

@@ -1,0 +1,38 @@
+# https://jdlm.info/articles/2019/10/19/testing-node-docker-compose-backend.html
+version: '2.2'
+services:
+  app:
+    build: .
+    ports:
+      - '3001:3001'
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+    expose:
+      - '3001'
+    volumes:
+      - .:/pakete
+      - node_modules:/pakete/node_modules
+    command: 'npm start'
+  db:
+    image: mysql:5.7
+    container_name: pakete-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'pakete'
+      MYSQL_USER: 'pakete'
+      MYSQL_PASSWORD: 'pakete'
+      MYSQL_ROOT_PASSWORD: 'pwd'
+    ports:
+      - '3307:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+    command: mysqld --sql_mode=""
+volumes:
+  my-db:
+  node_modules:

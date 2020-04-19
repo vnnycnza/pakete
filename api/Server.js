@@ -16,7 +16,7 @@ const bodyparser = require('body-parser');
  */
 class Server {
   constructor(options) {
-    this._url = options.config.url;
+    this._host = options.config.host;
     this._port = options.config.port;
     this._models = options.models;
     this._app = express();
@@ -54,7 +54,7 @@ class Server {
    */
   async start() {
     this._app.listen(this._port, '0.0.0.0', () => {
-      console.info(`[Server] Server is running on ${this._url}`);
+      console.info(`[Server] Server is running on ${this._host}:${this._port}`);
     });
   }
 
