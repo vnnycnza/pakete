@@ -13,6 +13,9 @@ module.exports = {
     beforeEach: 'readonly',
     expect: 'readonly',
     test: 'readonly',
+    before: 'readonly',
+    afterEach: 'readonly',
+    consoleErrorSpy: 'readonly',
   },
   parserOptions: {
     ecmaVersion: 2018,

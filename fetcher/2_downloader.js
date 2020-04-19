@@ -21,8 +21,8 @@ async function main() {
 
     // Setup db connection, models & services
     const env = process.env.NODE_ENV || 'development';
-    const dbConfig = require('../knexfile');
-    knex = require('knex')(dbConfig[env]);
+    const dbConfig = require('../knexfile')[env];
+    if (dbConfig) knex = require('knex')(dbConfig);
     const pkgDir = path.resolve(__dirname, '../.tmp/pkg');
 
     const PackageModel = new Package(knex);
@@ -51,7 +51,7 @@ async function main() {
     console.info('[Downloader] Sucessfully downloaded pkgs');
 
     // Destroy db connection
-    knex.destroy();
+    if (knex) knex.destroy();
 
     // Log Execution Time
     const hrend = process.hrtime(hrstart);

@@ -28,8 +28,8 @@ async function main() {
   let knex;
   try {
     // Setup db connection & models
-    const dbConfig = require('../knexfile');
-    knex = require('knex')(dbConfig[config.app.env]);
+    const dbConfig = require('../knexfile')[config.app.env];
+    if (dbConfig) knex = require('knex')(dbConfig);
 
     const AuthorModel = new Author(knex);
     const PackageModel = new Package(knex);

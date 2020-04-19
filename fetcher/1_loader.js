@@ -20,8 +20,8 @@ async function main() {
 
     // Setup db connection, models & services
     const env = process.env.NODE_ENV || 'development';
-    const dbConfig = require('../knexfile');
-    knex = require('knex')(dbConfig[env]);
+    const dbConfig = require('../knexfile')[env];
+    if (dbConfig) knex = require('knex')(dbConfig);
 
     const PackageModel = new Package(knex);
     const CranService = new Cran({
@@ -44,15 +44,12 @@ async function main() {
     console.info('[Loader] Saving packages to database...');
     const chunkedList = _.chunk(list, 1000);
     await Promise.all(
-      chunkedList.map(async pkgs => {
-        let response = await PackageModel.createPackages(pkgs);
-        return response;
-      }),
+      chunkedList.map(async pkgs => PackageModel.createPackages(pkgs)),
     );
     console.info('[Loader] Successfully saved packages to database');
 
     // Destroy db connection
-    knex.destroy();
+    if (knex) knex.destroy();
 
     // Log Execution Time
     const hrend = process.hrtime(hrstart);

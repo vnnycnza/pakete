@@ -28,8 +28,8 @@ async function main() {
 
     // Setup package directory, db connection & models
     const env = process.env.NODE_ENV || 'development';
-    const dbConfig = require('../knexfile');
-    knex = require('knex')(dbConfig[env]);
+    const dbConfig = require('../knexfile')[env];
+    if (dbConfig) knex = require('knex')(dbConfig);
     const pkgDir = path.resolve(__dirname, '../.tmp/pkg');
 
     const AuthorModel = new Author(knex);
@@ -77,13 +77,11 @@ async function main() {
     );
     const chunkedList = _.chunk(allAuthors, 1000);
     await Promise.all(
-      chunkedList.map(async pkgs => {
-        let response = await AuthorModel.createAuthors(pkgs);
-        return response;
-      }),
+      chunkedList.map(async pkgs => AuthorModel.createAuthors(pkgs)),
     );
+
     allAuthors = await AuthorModel.getAllAuthors();
-    console.info('[Parser] Sucessfully authors to database');
+    console.info('[Parser] Successfully authors to database');
 
     console.info('[Parser] Saving package info & updating packages...');
     const packageAuthorMapping = await Promise.all(
@@ -129,7 +127,7 @@ async function main() {
     fs.rmdirSync(pkgDir, { recursive: true });
 
     // Destroy db connection
-    knex.destroy();
+    if (knex) knex.destroy();
 
     // Log Execution Time
     const hrend = process.hrtime(hrstart);

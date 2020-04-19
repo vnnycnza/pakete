@@ -31,7 +31,7 @@ class Cran {
    */
   static _createError(details) {
     let error = new Error('CranError');
-    error = { ...error, ...details };
+    if (details) error.details = details;
     return error;
   }
 
@@ -49,10 +49,10 @@ class Cran {
       // Catch non 200 errors
       if (response.status !== 200) {
         const errDetails = {
-          details:
+          d:
             '[CranService._getCranPackageList] ' +
             `Cran Server returned HTTP ${response.status}`,
-          response,
+          r: response,
         };
         throw Cran._createError(errDetails);
       }
@@ -60,9 +60,8 @@ class Cran {
       // Catch if no response data returned
       if (!response.data) {
         const errDetails = {
-          details:
-            '[CranService._getCranPackageList] No response data returned',
-          response,
+          d: '[CranService._getCranPackageList] No response data returned',
+          r: response,
         };
         throw Cran._createError(errDetails);
       }
@@ -72,17 +71,16 @@ class Cran {
       let error = e;
 
       // Unexpected error on requesting
-      if (error.name !== 'CranError') {
+      if (error.message !== 'CranError') {
         error = Cran._createError({
-          details:
-            '[CranService._getCranPackageList] Request to Cran Server Failed',
-          response: { errorType: e.name, errorMsg: e.message },
+          d: '[CranService._getCranPackageList] Request to Cran Server Failed',
+          r: { errorType: e.name, errorMsg: e.message },
         });
       }
 
       console.error(
-        `[CranError] Details: ${error.details} | Response: ${JSON.stringify(
-          error.response,
+        `[CranError] Details: ${error.details.d} | Response: ${JSON.stringify(
+          error.details.r,
         )}`,
       );
 
@@ -153,20 +151,21 @@ class Cran {
         ...p,
         download_link: this._getDownloadLink(p.package, p.version),
       }));
+
       return packageList;
     } catch (e) {
       let error = e;
-      if (error.name !== 'CranError') {
+      if (error.message !== 'CranError') {
         error = Cran._createError({
-          details:
+          d:
             '[CranService.getPackageList] Error encountered in parsing response',
-          response: { errorType: e.name, errorMsg: e.message },
+          r: { errorType: e.name, errorMsg: e.message },
         });
       }
 
       console.error(
-        `[CranError] Details: ${error.details} | Response: ${JSON.stringify(
-          error.response,
+        `[CranError] Details: ${error.details.d} | Response: ${JSON.stringify(
+          error.details.r,
         )}`,
       );
 
@@ -201,10 +200,10 @@ class Cran {
       // Catch non 200 response
       if (response.status !== 200) {
         const errDetails = {
-          details:
+          d:
             '[CranService.downloadPackage] ' +
             `Cran Server returned HTTP ${response.status}`,
-          response,
+          r: response,
         };
         throw Cran._createError(errDetails);
       }
@@ -212,8 +211,8 @@ class Cran {
       // Catch no response.data
       if (!response.data) {
         const errDetails = {
-          details: '[CranService.downloadPackage] No response data returned',
-          response,
+          d: '[CranService.downloadPackage] No response data returned',
+          r: response,
         };
         throw Cran._createError(errDetails);
       }
@@ -226,16 +225,16 @@ class Cran {
       });
     } catch (e) {
       let error = e;
-      if (error.name !== 'CranError') {
+      if (error.message !== 'CranError') {
         error = Cran._createError({
-          details: '[CranService.downloadPackage] Download package failed',
-          response: { errorType: e.name, errorMsg: e.message },
+          d: '[CranService.downloadPackage] Download package failed',
+          r: { errorType: e.name, errorMsg: e.message },
         });
       }
 
       console.error(
-        `[CranError] Details: ${error.details} | Response: ${JSON.stringify(
-          error.response,
+        `[CranError] Details: ${error.details.d} | Response: ${JSON.stringify(
+          error.details.r,
         )}`,
       );
 
@@ -252,33 +251,6 @@ class Cran {
     // Transform response text to array split by new line
     const lines = content.split('\n');
 
-    // Helper function for checking if next line is a new attribute
-    // Assumption is if new line starts with a white space,
-    // it a continuation of the previous line
-    // Hence, this function "looks ahead" until next line is a new attribute
-    const lookAhead = (currentIndex, val) => {
-      let j = currentIndex + 1;
-      let nextLine = lines[j];
-      let moreThanOneLine = false;
-
-      while (nextLine.startsWith(' ') && j < lines.length) {
-        val += ' ' + nextLine.trim();
-        j += 1;
-        nextLine = lines[j];
-      }
-
-      // If we found that the next line is a continuation of the previous,
-      // we advance our "main cursor" to where we are already
-      if (j > currentIndex + 1) {
-        moreThanOneLine = true;
-      }
-
-      return {
-        lastIndex: moreThanOneLine ? j - 1 : currentIndex,
-        value: val,
-      };
-    };
-
     let pkg = {};
 
     for (let i = 0; i < lines.length; i += 1) {
@@ -286,7 +258,14 @@ class Cran {
 
       // Get title
       if (line.startsWith('Title:')) {
-        pkg.title = line.substring(line.indexOf(':') + 1).trim();
+        let title = line.substring(line.indexOf(':') + 1).trim();
+
+        // Sometimes, title exceeds one line
+        // Call helper function "lookAhead"
+        const { lastIndex, value } = Cran._lookAhead(i, title, lines);
+
+        i = lastIndex;
+        pkg.title = value;
       }
 
       // Get description
@@ -295,7 +274,7 @@ class Cran {
 
         // Usually description exceeds one line
         // Call helper function "lookAhead"
-        const { lastIndex, value } = lookAhead(i, description);
+        const { lastIndex, value } = Cran._lookAhead(i, description, lines);
 
         i = lastIndex;
         pkg.description = value;
@@ -312,7 +291,7 @@ class Cran {
 
         // Usually author also exceeds one line
         // Call helper function "lookAhead"
-        const { lastIndex, value } = lookAhead(i, author);
+        const { lastIndex, value } = Cran._lookAhead(i, author, lines);
 
         i = lastIndex;
         pkg.authors = Cran._sanitizeAuthors(value);
@@ -321,17 +300,45 @@ class Cran {
       // Get Maintainer
       if (line.startsWith('Maintainer:')) {
         let maintainer = line.substring(line.indexOf(':') + 1).trim();
-
-        // Usually maintainers also exceeds one line
-        // Call helper function "lookAhead"
-        const { lastIndex, value } = lookAhead(i, maintainer);
-
-        i = lastIndex;
-        pkg.maintainer = Cran._getNameAndEmail(value);
+        pkg.maintainer = Cran._getNameAndEmail(maintainer);
       }
     }
 
     return pkg;
+  }
+
+  /**
+   * Helper function for checking if next line is a new attribute
+   * Assumption is if new line starts with a white space,
+   * it a continuation of the previous line
+   * Hence, this function "looks ahead" until next line is a new attribute
+   *
+   * @param {Integer} currentIndex
+   * @param {String} val
+   * @param {Array} lines
+   * @returns {Object} `lastIndex` and `value`
+   */
+  static _lookAhead(currentIndex, val, lines) {
+    let j = currentIndex + 1;
+    let nextLine = lines[j];
+    let moreThanOneLine = false;
+
+    while (nextLine.startsWith(' ') && j < lines.length) {
+      val += ' ' + nextLine.trim();
+      j += 1;
+      nextLine = lines[j];
+    }
+
+    // If we found that the next line is a continuation of the previous,
+    // we advance our "main cursor" to where we are already
+    if (j > currentIndex + 1) {
+      moreThanOneLine = true;
+    }
+
+    return {
+      lastIndex: moreThanOneLine ? j - 1 : currentIndex,
+      value: val,
+    };
   }
 
   /**
