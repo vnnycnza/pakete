@@ -21,9 +21,9 @@ require('dotenv').config();
 async function main() {
   const config = {
     app: {
-      env: process.env.NODE_ENV || 'development',
-      port: process.env.PORT || 3001,
-      url: process.env.URL || 'http://localhost:3001',
+      env: process.env.NODE_ENV,
+      port: process.env.PORT,
+      url: process.env.URL,
     },
   };
 

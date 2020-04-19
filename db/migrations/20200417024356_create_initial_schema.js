@@ -21,6 +21,7 @@ exports.up = async knex => {
     table.string('package');
     table.string('version');
     table.string('search_name');
+    table.string('download_link');
     table
       .integer('package_info_id')
       .unsigned()

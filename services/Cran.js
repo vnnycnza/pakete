@@ -94,7 +94,7 @@ class Cran {
    * @param {String} textList response text
    * @return {Object[]} array of objects with `package` & `version` properties
    */
-  async _parsePackages(textList) {
+  _parsePackages(textList) {
     // Transform text to array split by new line
     const lines = textList.split('\n');
 
@@ -122,6 +122,22 @@ class Cran {
   }
 
   /**
+   * Returns download link
+   *
+   * @param {String} packageName object representing package
+   * @param {String} version object representing package
+   * @return {String} url
+   */
+  _getDownloadLink(packageName, version) {
+    // Format download URL based on package name & version
+    const url = this._descriptionUrl
+      .replace('[PACKAGE_NAME]', packageName)
+      .replace('[PACKAGE_VERSION]', version);
+
+    return url;
+  }
+
+  /**
    * Calls CranServer to get list of packages
    * Parses the response from server
    * Returns parsed response
@@ -131,7 +147,11 @@ class Cran {
   async getPackageList() {
     try {
       const serverResponse = await this._getCranPackageList();
-      const packageList = await this._parsePackages(serverResponse);
+      const packageVersionList = this._parsePackages(serverResponse);
+      const packageList = packageVersionList.map(p => ({
+        ...p,
+        download_link: this._getDownloadLink(p.package, p.version),
+      }));
       return packageList;
     } catch (e) {
       let error = e;
@@ -170,16 +190,10 @@ class Cran {
         this._packageDir,
         `${p.package}_${p.version}.tar.gz`,
       );
-
       const writer = fs.createWriteStream(dirPath);
 
-      // Format download URL based on package name & version
-      const url = this._descriptionUrl
-        .replace('[PACKAGE_NAME]', p.package)
-        .replace('[PACKAGE_VERSION]', p.version);
-
       // HTTP GET Request to CRAN Server
-      const response = await axios.get(url, {
+      const response = await axios.get(p.download_link, {
         responseType: 'stream',
       });
 
@@ -300,7 +314,7 @@ class Cran {
         const { lastIndex, value } = lookAhead(i, author);
 
         i = lastIndex;
-        pkg.authors = Cran.sanitizeAuthors(value);
+        pkg.authors = Cran._sanitizeAuthors(value);
       }
 
       // Get Maintainer
@@ -312,7 +326,7 @@ class Cran {
         const { lastIndex, value } = lookAhead(i, maintainer);
 
         i = lastIndex;
-        pkg.maintainer = Cran.getNameAndEmail(value);
+        pkg.maintainer = Cran._getNameAndEmail(value);
       }
     }
 
@@ -329,7 +343,7 @@ class Cran {
    * @param {String} authorText
    * @return {Object[]} array of objects with `name` property
    */
-  static sanitizeAuthors(authorText) {
+  static _sanitizeAuthors(authorText) {
     const sAuthors = authorText
       .replace(/\[.*?\]/g, '')
       .replace(/<.*?>/g, '')
@@ -350,7 +364,7 @@ class Cran {
    * @param {String} maintainerText
    * @return {Object} object with `name` and `email` property
    */
-  static getNameAndEmail(maintainerText) {
+  static _getNameAndEmail(maintainerText) {
     const emailMatch = maintainerText.match(/(<.*>)/);
     return {
       name: maintainerText.replace(emailMatch[0], '').trim(),

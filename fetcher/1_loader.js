@@ -14,13 +14,15 @@ require('dotenv').config();
  * @returns {Promise}
  */
 async function main() {
+  let knex;
+
   try {
     // Get hrtime() just to track execution time
     const hrstart = process.hrtime();
 
     // Setup db connection, models & services
     const config = require('../knexfile');
-    const knex = require('knex')(config.development);
+    knex = require('knex')(config.development);
     const PackageModel = new Package(knex);
     const CranService = new Cran({
       pUrl: process.env.CRAN_PACKAGE_LIST_URL,
@@ -65,6 +67,7 @@ async function main() {
     // Exit gracefully
     process.exit(0);
   } catch (e) {
+    if (knex) knex.destroy();
     console.error('[Loader] Error encountered', e);
     process.exit(1);
   }
