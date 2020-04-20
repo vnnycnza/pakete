@@ -16,7 +16,7 @@ npm run fetcher
 ## API
 This component resides in `api` folder. By default, the server runs at `http://localhost:3001/`
 ```
-npm run server
+npm start
 ```
 - [API Doc](doc/api.md)
 
@@ -52,14 +52,24 @@ npm run db:rollback
 - Node.js v12.15
 
 ### Configuration
-- See [.env](.env)
+
+| key                        | description                        | default                |
+| ---------------------------| -----------------------------------| -----------------------|
+| DB_HOST                    | Database Host                      | `localhost`            |
+| DB_USER                    | Database User                      | `pakete`               |
+| DB_PW                      | Database Password                  | `pakete`               |
+| DB_NAME                    | Database Name                      | `pakete`               |
+| CRAN_PACKAGE_LIST_MAX      | Number of packages to retrieve     | 50                     |
+| NODE_ENV                   | Node Environment                   | `development`          |
+| URL                        | Server URL                         | `http://localhost:3001`|
+| PORT                       | Server Port                        | `3001`                 |
 
 ### Running on your local
 - Ensure prerequisites are installed
 - Create database user
 ```
 CREATE USER 'pakete'@'localhost' IDENTIFIED BY 'pakete';
-GRANT ALL PRIVILEGES ON pakete.* TO 'pakete'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'pakete'@'localhost';
 ```
 - Run initializing db
 ```
@@ -76,6 +86,7 @@ npm start
 - Can also run tests
 ```
 npm test
+npm run test:integration
 ```
 
 ### Running using Docker
@@ -90,5 +101,14 @@ docker-compose run --rm app npm run fetch
 - Can also run tests
 ```
 docker-compose run --rm --no-deps app npm test
+```
+- Can also run mini integration test, but add grants to `pakete_test` table
+```
+docker exec -it <mysql container id> mysql -uroot
+> GRANT ALL PRIVILEGES ON *.* TO 'pakete'@'%';
+> exit
+```
+```
+docker-compose run --rm app npm run test:integration
 ```
 

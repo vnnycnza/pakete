@@ -15,7 +15,7 @@ describe('[ Services - Cran ]', () => {
     beforeEach(() => {
       service = new Cran({
         pDir: '.tmp/pkg',
-        maxItems: 50,
+        maxItems: 10,
       });
     });
 
@@ -36,12 +36,12 @@ describe('[ Services - Cran ]', () => {
     });
 
     test('{ should have correct maxItems }', () => {
-      expect(service._maxItems).toEqual(50);
+      expect(service._maxItems).toEqual(10);
     });
 
     test('{ should have maxItems = 10 when none is passed }', () => {
       service = new Cran({});
-      expect(service._maxItems).toEqual(10);
+      expect(service._maxItems).toEqual(50);
     });
   });
 
@@ -80,7 +80,7 @@ describe('[ Services - Cran ]', () => {
         axios.get,
       ).toHaveBeenCalledWith(
         'https://cran.r-project.org/src/contrib/PACKAGES',
-        { responseType: 'text' },
+        { responseType: 'text', validateStatus: null },
       );
     });
 
@@ -343,7 +343,7 @@ describe('[ Services - Cran ]', () => {
         axios.get,
       ).toHaveBeenCalledWith(
         'https://cran.r-project.org/src/contrib/abc_1.2.3.tar.gz',
-        { responseType: 'stream' },
+        { responseType: 'stream', validateStatus: null },
       );
     });
 

@@ -21,7 +21,7 @@ class Cran {
     this._descriptionUrl =
       'https://cran.r-project.org/src/contrib/[PACKAGE_NAME]_[PACKAGE_VERSION].tar.gz';
     this._packageDir = config.pDir;
-    this._maxItems = config.maxItems ? parseInt(config.maxItems, 10) : 10;
+    this._maxItems = config.maxItems ? parseInt(config.maxItems, 10) : 50;
   }
 
   /**
@@ -44,6 +44,7 @@ class Cran {
       // HTTP GET Request to CRAN Server to retrieve package list
       const response = await axios.get(this._packagesUrl, {
         responseType: 'text',
+        validateStatus: null,
       });
 
       // Catch non 200 errors
@@ -195,6 +196,7 @@ class Cran {
       // HTTP GET Request to CRAN Server
       const response = await axios.get(p.download_link, {
         responseType: 'stream',
+        validateStatus: null,
       });
 
       // Catch non 200 response

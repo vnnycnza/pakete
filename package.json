@@ -5,19 +5,24 @@
   "main": "index.js",
   "scripts": {
     "start": "TZ=UTC node api/app.js",
-    "fetch": "npm run db:rollback && npm run db:migrate && npm run loader && npm run downloader && npm run parser",
     "loader": "node fetcher/1_loader.js",
     "downloader": "node fetcher/2_downloader.js",
     "parser": "node fetcher/3_parser.js",
-    "test:unit": "TZ=UTC NODE_ENV=\"test\" node_modules/.bin/jest tests/unit/.*.test.js --c unit.config.js --detectOpenHandles",
+    "fetch": "npm run db:rollback && npm run db:migrate && npm run loader && npm run downloader && npm run parser",
+    "test:e2e": "NODE_ENV=teste2e node_modules/.bin/jest tests/integration/.*.test.js --c e2e.config.js --runInBand",
+    "posttest:server": "node_modules/.bin/forever stop api/app.js",
+    "test:integration": "npm run pretest:fetcher && npm run pretest:server && npm run test:e2e && npm run posttest:server",
+    "pretest:server": "TZ=UTC NODE_ENV=teste2e PORT=3002 node_modules/.bin/forever start api/app.js",
+    "pretest:fetcher": "NODE_ENV=teste2e npm run db:init && NODE_ENV=teste2e CRAN_PACKAGE_LIST_MAX=5 npm run fetch",
+    "test:unit": "NODE_ENV=test node_modules/.bin/jest tests/unit/.*.test.js --c unit.config.js --detectOpenHandles",
     "test": "npm run prettier && npm run lint && npm run test:unit",
-    "prettier-fix": "./node_modules/.bin/prettier --write \"./**/*\"",
-    "prettier": "./node_modules/.bin/prettier --check \"./**/*\"",
-    "lint-fix": "./node_modules/.bin/eslint --fix \"./**/*.js\"",
-    "lint": "./node_modules/.bin/eslint \"./**/*.js\"",
     "db:init": "node db/initialize.js",
     "db:migrate": "./node_modules/.bin/knex migrate:latest",
-    "db:rollback": "./node_modules/.bin/knex migrate:rollback"
+    "db:rollback": "./node_modules/.bin/knex migrate:rollback",
+    "lint": "./node_modules/.bin/eslint \"./**/*.js\"",
+    "lint-fix": "./node_modules/.bin/eslint --fix \"./**/*.js\"",
+    "prettier": "./node_modules/.bin/prettier --check \"./**/*\"",
+    "prettier-fix": "./node_modules/.bin/prettier --write \"./**/*\""
   },
   "repository": {
     "type": "git",
@@ -46,6 +51,7 @@
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "forever": "^2.0.0",
     "mysql": "^2.18.1",
     "tar": "^6.0.1"
   }

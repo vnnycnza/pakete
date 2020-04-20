@@ -1,6 +1,6 @@
 /**
  * Entrypoint
- * @module index.js
+ * @module app.js
  */
 
 'use strict';
@@ -14,7 +14,7 @@ const Server = require('./Server');
 
 /**
  * Main Function
- * @returns {undefined}
+ * @returns {Promise}
  */
 async function main() {
   const config = {

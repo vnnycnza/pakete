@@ -83,6 +83,7 @@ async function main() {
     allAuthors = await AuthorModel.getAllAuthors();
     console.info('[Parser] Successfully authors to database');
 
+    // Save package info and map to packages table
     console.info('[Parser] Saving package info & updating packages...');
     const packageAuthorMapping = await Promise.all(
       packageInfo.map(async pkg => {
@@ -114,6 +115,7 @@ async function main() {
     );
     console.info('[Parser] Successfully saved package info & updated package');
 
+    // Create package and author mappings
     console.info('[Parser] Saving package and author/maintainer mappings...');
     const chunkedPAList = _.chunk(packageAuthorMapping.flat(), 1000);
     await Promise.all(

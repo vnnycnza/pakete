@@ -44,7 +44,10 @@ class Author {
   async getAllAuthors() {
     try {
       const authors = await this._db.select().table('authors');
-      return authors.map(a => ({ ...a }));
+      return authors.map(a => ({
+        ...a,
+        ...(a.email === null ? { email: '' } : { email: a.email }),
+      }));
     } catch (e) {
       console.info('[DatabaseError.getAllAuthors]', e);
       let err = new Error('DatabaseError');

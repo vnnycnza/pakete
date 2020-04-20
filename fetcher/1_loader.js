@@ -6,8 +6,8 @@ const Package = require('../models/Package');
 
 /**
  * Gets package list from CRAN Server
- * Parse & get package name & version
- * Save to database
+ * Parses & gets package name & version
+ * Saves to database
  *
  * @returns {Promise}
  */

@@ -7,8 +7,7 @@ const Package = require('../models/Package');
 
 /**
  * Queries database for the package list
- * Attempts to try and download packages
- * Number of pkgs to download based on env var
+ * Attempts to download packages from list
  *
  * @returns {Promise}
  */

@@ -8,7 +8,8 @@ const dbConfig = require('../knexfile');
  */
 async function main() {
   try {
-    const { host, user, password } = dbConfig.development.connection;
+    const env = process.env.NODE_ENV || 'development';
+    const { host, user, password } = dbConfig[env].connection;
     const knex = require('knex')({
       client: 'mysql',
       connection: {
@@ -17,8 +18,9 @@ async function main() {
         password,
       },
     });
-    const { connection } = dbConfig.development;
+    const { connection } = dbConfig[env];
     await knex.raw(`CREATE DATABASE IF NOT EXISTS ${connection.database}`);
+    console.info(`Created ${connection.database} database`);
     knex.destroy();
     process.exit(0);
   } catch (e) {
